@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Your account — Marketplace{% endblock %}
+{% block content %}
+<section class="container" style="padding-top:40px; max-width:760px;">
+  <h2>Your account</h2>
+
+  <div class="wallet-balance">
+    <div style="font-size:0.8rem; opacity:0.8;">Wallet balance</div>
+    <div class="amount">{{ format_price(current_user['wallet_balance_cents']) }}</div>
+    <a href="{{ url_for('wallet_topup') }}" class="btn btn-brass btn-small" style="margin-top:10px;">Top up wallet</a>
+  </div>
+
+  <h3 style="font-size:1.1rem; margin-top:32px;">Order history</h3>
+  {% if orders %}
+    <table class="cart-table">
+      <thead><tr><th>Order</th><th>Date</th><th>Status</th><th>Total</th><th></th></tr></thead>
+      <tbody>
+        {% for order in orders %}
+          <tr>
+            <td>#{{ order['id'] }}</td>
+            <td>{{ order['created_at'] }}</td>
+            <td><span class="status-pill status-{{ order['status'] }}">{{ order['status'] }}</span></td>
+            <td class="price">{{ format_price(order['total_cents']) }}</td>
+            <td><a href="{{ url_for('order_status_by_id', order_id=order['id']) }}">View</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty-state"><p>No orders yet.</p><a href="{{ url_for('shop') }}" class="btn btn-dark" style="margin-top:12px;">Start shopping</a></div>
+  {% endif %}
+
+  <h3 style="font-size:1.1rem; margin-top:32px;">Wallet activity</h3>
+  {% if wallet_tx %}
+    <table class="cart-table">
+      <thead><tr><th>Date</th><th>Description</th><th>Amount</th></tr></thead>
+      <tbody>
+        {% for tx in wallet_tx %}
+          <tr>
+            <td>{{ tx['created_at'] }}</td>
+            <td>{{ tx['description'] }}</td>
+            <td class="price" style="color: {{ 'var(--wine)' if tx['amount_cents'] < 0 else '#1d4a38' }};">
+              {{ '+' if tx['amount_cents'] > 0 }}{{ format_price(tx['amount_cents']) }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="color:rgba(36,26,18,0.55); font-size:0.9rem;">No wallet activity yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

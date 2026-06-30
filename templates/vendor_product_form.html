@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit product' if product else 'Add product' }} — Marketplace{% endblock %}
+{% block content %}
+<section class="container" style="padding-top:40px; max-width:600px;">
+  <h2>{{ 'Edit product' if product else 'Add a new product' }}</h2>
+  <form method="post" class="card-panel">
+    <div class="form-field">
+      <label for="name">Product name</label>
+      <input type="text" id="name" name="name" required value="{{ form['name'] if form else '' }}">
+    </div>
+    <div class="form-field">
+      <label for="category_id">Category</label>
+      <select id="category_id" name="category_id" required style="width:100%; padding:11px; border:1px solid var(--line); border-radius:3px; background:var(--ivory);">
+        {% for cat in categories %}
+          <option value="{{ cat['id'] }}" {{ 'selected' if form and form['category_id']|string == cat['id']|string }}>{{ cat['name'] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="short_desc">Short description (shown on product cards)</label>
+      <input type="text" id="short_desc" name="short_desc" value="{{ form['short_desc'] if form else '' }}">
+    </div>
+    <div class="form-field">
+      <label for="description">Full description</label>
+      <input type="text" id="description" name="description" value="{{ form['description'] if form else '' }}">
+    </div>
+    <div class="form-field">
+      <label for="price">Regular price (USD)</label>
+      <input type="number" id="price" name="price" step="0.01" min="0.01" required
+             value="{{ (form['price_cents'] / 100) if form and form['price_cents'] is defined else (form['price'] if form else '') }}">
+    </div>
+    <div class="form-field">
+      <label for="sale_price">Sale price (USD, optional — leave blank for no sale)</label>
+      <input type="number" id="sale_price" name="sale_price" step="0.01" min="0.01"
+             value="{{ (form['sale_price_cents'] / 100) if form and form['sale_price_cents'] else (form['sale_price'] if form else '') }}">
+    </div>
+    <div class="form-field">
+      <label for="stock">Stock quantity</label>
+      <input type="number" id="stock" name="stock" min="0" step="1" required value="{{ form['stock'] if form else '' }}">
+    </div>
+    <button type="submit" class="btn btn-brass btn-block">{{ 'Save changes' if product else 'Add product' }}</button>
+  </form>
+</section>
+{% endblock %}

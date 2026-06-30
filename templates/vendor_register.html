@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Open a store — Marketplace{% endblock %}
+{% block content %}
+<div class="auth-shell card-panel">
+  <h2>Open a vendor store</h2>
+  <p style="font-size:0.9rem; color:rgba(36,26,18,0.65); margin-bottom:16px;">List your own products and manage your orders.</p>
+  <form method="post">
+    <div class="form-field"><label for="store_name">Store name</label><input type="text" id="store_name" name="store_name" required value="{{ store_name or '' }}"></div>
+    <div class="form-field"><label for="name">Your name</label><input type="text" id="name" name="name" required value="{{ name or '' }}"></div>
+    <div class="form-field"><label for="email">Email</label><input type="email" id="email" name="email" required value="{{ email or '' }}"></div>
+    <div class="form-field"><label for="password">Password</label><input type="password" id="password" name="password" required minlength="8"></div>
+    <button type="submit" class="btn btn-brass btn-block">Open my store</button>
+  </form>
+  <p style="margin-top:16px; font-size:0.9rem;">Shopping instead? <a href="{{ url_for('register') }}" style="color:var(--wine); font-weight:600;">Create a customer account</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Marketplace — Shop Local Vendors{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  {% if active_promotions %}
+    <div class="promo-bar">
+      <div class="container">
+        {% for promo in active_promotions %}
+          <span><strong>{{ promo['title'] }}</strong> — {{ promo['description'] }}
+            {% if promo['code'] %}<span class="code">{{ promo['code'] }}</span>{% endif %}
+          </span>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="logo" href="{{ url_for('index') }}">Market<span class="dot">place</span></a>
+      <nav class="nav-links">
+        <a href="{{ url_for('shop') }}">All products</a>
+        <a href="{{ url_for('shop', slug='electronics') }}">Electronics</a>
+        <a href="{{ url_for('shop', slug='fashion') }}">Fashion</a>
+        <a href="{{ url_for('shop', slug='home-kitchen') }}">Home</a>
+        <a href="{{ url_for('shop', slug='sports-outdoors') }}">Sports</a>
+        <a href="{{ url_for('shop', slug='books-stationery') }}">Books</a>
+      </nav>
+      <div class="header-actions">
+        <form action="{{ url_for('shop') }}" method="get" style="display:flex;">
+          <input type="text" name="q" placeholder="Search products"
+                 style="padding:7px 10px; border-radius:3px; border:1px solid rgba(243,236,219,0.3); background:rgba(243,236,219,0.08); color:#fff; font-size:0.85rem; width:140px;">
+        </form>
+        {% if current_user %}
+          {% if current_user['role'] == 'vendor' %}
+            <a href="{{ url_for('vendor_dashboard') }}">My store</a>
+          {% else %}
+            <a href="{{ url_for('account') }}">Hi, {{ current_user['name'].split(' ')[0] }}</a>
+          {% endif %}
+          <form action="{{ url_for('logout') }}" method="post" style="display:inline">
+            <button type="submit" class="btn btn-outline btn-small">Log out</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('login') }}">Log in</a>
+        {% endif %}
+        <a class="cart-pill" href="{{ url_for('cart_view') }}">Cart · {{ cart_count }}</a>
+      </div>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-stack">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div>
+        <div class="logo">Market<span class="dot">place</span></div>
+        <p style="margin-top:10px; max-width:340px;">A multi-vendor marketplace built as a student project to demonstrate a full e-commerce flow: catalog, cart, payments, accounts, and order tracking.</p>
+      </div>
+      <div>
+        <p>Sell on Marketplace? <a href="{{ url_for('vendor_register') }}" style="color:var(--brass-light); font-weight:600;">Open a store</a></p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

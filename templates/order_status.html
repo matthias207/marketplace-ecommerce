@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order['id'] }} — Marketplace{% endblock %}
+{% block content %}
+<section class="container" style="padding-top:40px; max-width:700px;">
+  <h2>Order #{{ order['id'] }}</h2>
+  <p>
+    <span class="status-pill status-{{ order['status'] }}">{{ order['status'] }}</span>
+    <span style="color:rgba(36,26,18,0.55); font-size:0.85rem; margin-left:10px;">Placed {{ order['created_at'] }}</span>
+  </p>
+
+  {% if order['status'] == 'cancelled' %}
+    <p style="color:var(--wine); font-weight:600; margin-top:18px;">This order was cancelled.</p>
+  {% else %}
+    <div class="status-track">
+      {% set flow = ['pending', 'paid', 'processing', 'shipped', 'delivered'] %}
+      {% set current_index = flow.index(order['status']) if order['status'] in flow else 0 %}
+      {% for step in flow %}
+        <div class="status-step {{ 'done' if flow.index(step) <= current_index }}">{{ step }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="card-panel" style="margin-top:24px;">
+    <h3 style="font-size:1rem; margin-bottom:14px;">Items</h3>
+    {% for item in items %}
+      <div class="totals-row">
+        <span>{{ item['quantity'] }} × {{ item['name'] }}</span>
+        <span class="price">{{ format_price(item['price_cents'] * item['quantity']) }}</span>
+      </div>
+    {% endfor %}
+    <div class="totals-row grand"><span>Total</span><span class="price">{{ format_price(order['total_cents']) }}</span></div>
+  </div>
+
+  {% if order['status'] in ['pending', 'paid', 'processing'] %}
+    <form action="{{ url_for('order_cancel', order_id=order['id']) }}" method="post" style="margin-top:20px;"
+          onsubmit="return confirm('Cancel this order? This can\'t be undone.');">
+      <button type="submit" class="btn btn-outline" style="border-color:var(--wine); color:var(--wine);">Cancel this order</button>
+    </form>
+  {% endif %}
+
+  <p style="margin-top:24px; font-size:0.85rem; color:rgba(36,26,18,0.55);">
+    Bookmark this page, or use the link from your confirmation email, to check your order status any time.
+  </p>
+</section>
+{% endblock %}

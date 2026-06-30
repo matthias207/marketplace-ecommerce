@@ -1,0 +1,29 @@
+<div class="product-card">
+  <a href="{{ url_for('product_detail', slug=product['slug']) }}" class="product-thumb">
+    {% if product['sale_price_cents'] %}<span class="tag-string">Sale</span>{% endif %}
+    {{ instrument_icon(category_slug_for(product['category_id'])) }}
+  </a>
+  <div class="product-body">
+    <div class="vendor-tag">{{ vendor_name_for(product['vendor_id']) }}</div>
+    <h3><a href="{{ url_for('product_detail', slug=product['slug']) }}">{{ product['name'] }}</a></h3>
+    <p class="desc">{{ product['short_desc'] }}</p>
+    <div class="price-row">
+      {% if product['sale_price_cents'] %}
+        <span class="price">{{ format_price(product['sale_price_cents']) }}</span>
+        <span class="price price-strike">{{ format_price(product['price_cents']) }}</span>
+        <span class="sale-badge">Sale</span>
+      {% else %}
+        <span class="price">{{ format_price(product['price_cents']) }}</span>
+      {% endif %}
+    </div>
+    <div class="product-footer">
+      <span style="font-size:0.78rem; color:rgba(36,26,18,0.55);">
+        {% if product['stock'] > 0 %}{{ product['stock'] }} in stock{% else %}Out of stock{% endif %}
+      </span>
+      <form action="{{ url_for('cart_add', product_id=product['id']) }}" method="post">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="btn btn-dark btn-small" {{ 'disabled' if product['stock'] <= 0 }}>Add to cart</button>
+      </form>
+    </div>
+  </div>
+</div>

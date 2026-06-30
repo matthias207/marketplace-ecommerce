@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Create account — Marketplace{% endblock %}
+{% block content %}
+<div class="auth-shell card-panel">
+  <h2>Create a customer account</h2>
+  <form method="post">
+    <div class="form-field"><label for="name">Full name</label><input type="text" id="name" name="name" required value="{{ name or '' }}"></div>
+    <div class="form-field"><label for="email">Email</label><input type="email" id="email" name="email" required value="{{ email or '' }}"></div>
+    <div class="form-field"><label for="password">Password</label><input type="password" id="password" name="password" required minlength="8"></div>
+    <button type="submit" class="btn btn-brass btn-block">Create account</button>
+  </form>
+  <p style="margin-top:16px; font-size:0.9rem;">Already have one? <a href="{{ url_for('login') }}" style="color:var(--wine); font-weight:600;">Log in</a></p>
+</div>
+{% endblock %}

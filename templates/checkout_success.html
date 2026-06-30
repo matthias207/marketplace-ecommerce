@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Order confirmed — Marketplace{% endblock %}
+{% block content %}
+<section class="container" style="padding-top:60px; max-width:560px; text-align:center;">
+  <h2>Thanks — your order is in.</h2>
+  <p style="color:rgba(36,26,18,0.65);">Your payment went through. A receipt is on its way to your inbox.</p>
+  <a href="{{ url_for('shop') }}" class="btn btn-brass" style="margin-top:18px;">Keep browsing</a>
+</section>
+{% endblock %}

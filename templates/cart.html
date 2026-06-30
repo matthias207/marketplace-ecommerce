@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Your Cart — Marketplace{% endblock %}
+{% block content %}
+<section class="container" style="padding-top:40px; max-width:900px;">
+  <h2>Your cart</h2>
+
+  {% if items %}
+    <table class="cart-table">
+      <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
+      <tbody>
+        {% for item in items %}
+          <tr>
+            <td>
+              <div class="cart-item-name">
+                <div class="product-thumb">{{ instrument_icon(category_slug_for(item['product']['category_id'])) }}</div>
+                <div>
+                  <a href="{{ url_for('product_detail', slug=item['product']['slug']) }}">{{ item['product']['name'] }}</a>
+                  <div class="vendor-tag" style="font-size:0.72rem;">{{ vendor_name_for(item['product']['vendor_id']) }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="price">{{ format_price(item['price']) }}</td>
+            <td>
+              <form action="{{ url_for('cart_update', product_id=item['product']['id']) }}" method="post" style="display:flex; gap:6px;">
+                <input class="cart-qty-input" type="number" name="quantity" value="{{ item['qty'] }}" min="0" max="{{ item['product']['stock'] }}">
+                <button type="submit" class="btn btn-outline btn-small" style="border-color:var(--line); color:var(--ink);">Update</button>
+              </form>
+            </td>
+            <td class="price">{{ format_price(item['subtotal']) }}</td>
+            <td>
+              <form action="{{ url_for('cart_remove', product_id=item['product']['id']) }}" method="post">
+                <button type="submit" class="btn btn-outline btn-small" style="border-color:var(--line); color:var(--wine);">Remove</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="cart-summary">
+      <div class="totals">
+        <div class="totals-row"><span>Subtotal</span><span class="price">{{ format_price(total) }}</span></div>
+        <div class="totals-row"><span>Shipping</span><span>Calculated at checkout</span></div>
+        <div class="totals-row grand"><span>Total</span><span class="price">{{ format_price(total) }}</span></div>
+        <a href="{{ url_for('checkout') }}" class="btn btn-brass btn-block" style="margin-top:16px;">Proceed to checkout</a>
+      </div>
+    </div>
+
+    {% if recommendations %}
+      <div class="section-head" style="margin-top:48px;">
+        <div><div class="eyebrow">Before you go</div><h2>Customers also added</h2></div>
+      </div>
+      <div class="product-grid">
+        {% for product in recommendations %}{% include "_product_card.html" %}{% endfor %}
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="empty-state">
+      <p>Your cart is empty.</p>
+      <a href="{{ url_for('shop') }}" class="btn btn-dark" style="margin-top:12px;">Browse products</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

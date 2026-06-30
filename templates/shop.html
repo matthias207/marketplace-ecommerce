@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ active_category['name'] if active_category else 'All Products' }} — Marketplace{% endblock %}
+{% block content %}
+<section class="container" style="padding-top:40px;">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">{{ active_category['name'] if active_category else 'Full catalog' }}</div>
+      <h2>
+        {% if query %}Results for "{{ query }}"
+        {% elif active_category %}{{ active_category['description'] }}
+        {% else %}Every product, every vendor{% endif %}
+      </h2>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <a class="filter-chip {{ 'active' if not active_category }}" href="{{ url_for('shop') }}">All</a>
+    {% for cat in categories %}
+      <a class="filter-chip {{ 'active' if active_category and active_category['slug'] == cat['slug'] }}"
+         href="{{ url_for('shop', slug=cat['slug']) }}">{{ cat['name'] }}</a>
+    {% endfor %}
+  </div>
+
+  {% if products %}
+    <div class="product-grid">
+      {% for product in products %}
+        {% include "_product_card.html" %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state"><p>No products matched. Try another category or search term.</p></div>
+  {% endif %}
+</section>
+{% endblock %}

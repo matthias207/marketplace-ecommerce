@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ product['name'] }} — Marketplace{% endblock %}
+{% block content %}
+<section class="container" style="padding-top:40px;">
+  <div class="product-detail">
+    <div class="product-thumb">
+      {% if product['sale_price_cents'] %}<span class="tag-string">Sale</span>{% endif %}
+      {{ instrument_icon(category_slug_for(product['category_id'])) }}
+    </div>
+    <div>
+      <div class="vendor-tag">Sold by {{ vendor_name_for(product['vendor_id']) }}</div>
+      <h1>{{ product['name'] }}</h1>
+      <p style="color:rgba(36,26,18,0.65);">{{ product['short_desc'] }}</p>
+
+      {% if product['sale_price_cents'] %}
+        <div class="price-large price">{{ format_price(product['sale_price_cents']) }}
+          <span class="price-strike" style="font-size:0.6em; margin-left:8px;">{{ format_price(product['price_cents']) }}</span>
+        </div>
+      {% else %}
+        <div class="price-large price">{{ format_price(product['price_cents']) }}</div>
+      {% endif %}
+
+      <p>{{ product['description'] }}</p>
+
+      {% if product['stock'] > 0 %}
+        <p class="stock-note">{{ product['stock'] }} in stock, ready to ship.</p>
+        <form action="{{ url_for('cart_add', product_id=product['id']) }}" method="post">
+          <div class="qty-row">
+            <label for="quantity" style="font-weight:600; font-size:0.85rem;">Quantity</label>
+            <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product['stock'] }}">
+          </div>
+          <button type="submit" class="btn btn-brass btn-block">Add to cart</button>
+        </form>
+      {% else %}
+        <p class="stock-note">Currently out of stock.</p>
+        <button class="btn btn-outline btn-block" disabled style="opacity:0.5;">Out of stock</button>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if related %}
+    <div class="section-head" style="margin-top:56px;">
+      <div><div class="eyebrow">Recommended for you</div><h2>You might also like</h2></div>
+    </div>
+    <div class="product-grid">
+      {% for product in related %}
+        {% include "_product_card.html" %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ vendor['store_name'] }} dashboard — Marketplace{% endblock %}
+{% block content %}
+<section class="container" style="padding-top:40px;">
+  <div class="section-head">
+    <div><div class="eyebrow">Vendor dashboard</div><h2>{{ vendor['store_name'] }}</h2></div>
+    <a href="{{ url_for('vendor_product_new') }}" class="btn btn-brass">Add a product</a>
+  </div>
+
+  <div class="dash-grid">
+    <div class="dash-stat"><div class="num">{{ products|length }}</div><div class="label">Products listed</div></div>
+    <div class="dash-stat"><div class="num">{{ order_items|length }}</div><div class="label">Recent order lines</div></div>
+    <div class="dash-stat"><div class="num">{{ products|selectattr('stock', 'le', 0)|list|length }}</div><div class="label">Out of stock</div></div>
+  </div>
+
+  <h3 style="font-size:1.1rem;">Your products</h3>
+  {% if products %}
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for p in products %}
+          <tr>
+            <td>{{ p['name'] }}</td>
+            <td class="price">
+              {% if p['sale_price_cents'] %}{{ format_price(p['sale_price_cents']) }} <span class="price-strike">{{ format_price(p['price_cents']) }}</span>
+              {% else %}{{ format_price(p['price_cents']) }}{% endif %}
+            </td>
+            <td>{{ p['stock'] }}</td>
+            <td>{{ 'Active' if p['active'] else 'Removed' }}</td>
+            <td>
+              <a href="{{ url_for('vendor_product_edit', product_id=p['id']) }}">Edit</a>
+              {% if p['active'] %}
+                &nbsp;·&nbsp;
+                <form action="{{ url_for('vendor_product_delete', product_id=p['id']) }}" method="post" style="display:inline"
+                      onsubmit="return confirm('Remove this product from your store?');">
+                  <button type="submit" class="btn-link">Remove</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty-state"><p>You haven't listed any products yet.</p><a href="{{ url_for('vendor_product_new') }}" class="btn btn-dark" style="margin-top:12px;">Add your first product</a></div>
+  {% endif %}
+
+  <h3 style="font-size:1.1rem; margin-top:32px;">Recent orders for your products</h3>
+  {% if order_items %}
+    <table class="data-table">
+      <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for oi in order_items %}
+          <tr>
+            <td>{{ oi['created_at'] }}</td>
+            <td>{{ oi['product_name'] }}</td>
+            <td>{{ oi['quantity'] }}</td>
+            <td><span class="status-pill status-{{ oi['status'] }}">{{ oi['status'] }}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="color:rgba(36,26,18,0.55); font-size:0.9rem;">No orders yet for your products.</p>
+  {% endif %}
+</section>
+{% endblock %}

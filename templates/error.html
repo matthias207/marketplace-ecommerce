@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Error {{ code }} — Marketplace{% endblock %}
+{% block content %}
+<section class="container" style="padding-top:60px; text-align:center;">
+  <h2>{{ code }} — {{ message }}</h2>
+  <p style="color:rgba(36,26,18,0.65);">If this kept happening, that would be a bug worth reporting.</p>
+  <a href="{{ url_for('index') }}" class="btn btn-brass" style="margin-top:18px;">Back to home</a>
+</section>
+{% endblock %}

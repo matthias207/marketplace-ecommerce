@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+  <div class="container">
+    <div>
+      <div class="eyebrow">A marketplace of independent vendors</div>
+      <h1>One cart. Every vendor's best stuff.</h1>
+      <p class="lede">Shop electronics, home goods, fashion, outdoor gear, and books — all from independently run stores, checked out together in one cart.</p>
+      <div style="display:flex; gap:14px; flex-wrap:wrap;">
+        <a href="{{ url_for('shop') }}" class="btn btn-brass">Browse all products</a>
+        <a href="{{ url_for('vendor_register') }}" class="btn btn-outline">Sell on Marketplace</a>
+      </div>
+    </div>
+    <div class="hero-tag">
+      <div class="label">Today's deal</div>
+      {% if featured %}
+        <div class="big">{{ featured[0]['name'] }}</div>
+        <div class="sub">{{ featured[0]['short_desc'] }}</div>
+        <div style="margin-top:14px;">
+          <a href="{{ url_for('product_detail', slug=featured[0]['slug']) }}" class="btn btn-brass btn-small">View product</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<svg class="waveform-divider" viewBox="0 0 1140 28" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <g class="bar-shape">
+    {% for i in range(60) %}
+      <rect x="{{ i * 19 }}" y="{{ 14 - (4 + (i % 7) * 1.6) }}" width="6" height="{{ (4 + (i % 7) * 1.6) * 2 }}" rx="1.5"></rect>
+    {% endfor %}
+  </g>
+</svg>
+
+<section class="container">
+  <div class="section-head">
+    <div><div class="eyebrow">Shop by category</div><h2>Find what you need</h2></div>
+  </div>
+  <div class="category-grid">
+    {% for cat in categories %}
+      <a class="category-card" href="{{ url_for('shop', slug=cat['slug']) }}">
+        <h3>{{ cat['name'] }}</h3>
+        <p>{{ cat['description'] }}</p>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container">
+  <div class="section-head">
+    <div><div class="eyebrow">Across every vendor</div><h2>Featured products</h2></div>
+    <a href="{{ url_for('shop') }}">See everything →</a>
+  </div>
+  <div class="product-grid">
+    {% for product in featured %}
+      {% include "_product_card.html" %}
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}
