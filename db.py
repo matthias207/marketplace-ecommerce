@@ -171,3 +171,14 @@ def new_tracking_token():
 def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+
+
+def ensure_initialized(app):
+    with app.app_context():
+        conn = get_db()
+        try:
+            conn.execute("SELECT 1 FROM products LIMIT 1")
+        except sqlite3.OperationalError:
+            init_db()
+            seed_db()
+        close_db()
