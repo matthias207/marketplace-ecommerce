@@ -38,6 +38,7 @@ def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-change-me")
     db.init_app(app)
+    db.ensure_initialized(app)
     register_routes(app)
     register_error_handlers(app)
     return app
